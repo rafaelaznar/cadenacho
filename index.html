@@ -299,7 +299,8 @@
           const mean = str.length / distinct.length;
           const variance = counts.reduce((sum, c) => sum + (c - mean) ** 2, 0) / distinct.length;
           const stdDev = Math.sqrt(variance);
-          html += `<div>Standard deviation: <strong>${stdDev.toFixed(4)}</strong> chars</div>`;
+          const cv = (stdDev / mean) * 100;
+          html += `<div>Coefficient of variation: <strong>${cv.toFixed(4)}%</strong></div>`;
           html += `<div class="entropy-line">Total entropy: <strong>${totalEntropy.toFixed(4)}</strong> bits</div>`;
           html += `<div>Entropy per character: <strong>${entropyPerChar.toFixed(4)}</strong> bits/char</div>`;
           return html;
