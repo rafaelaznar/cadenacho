@@ -168,7 +168,7 @@
 
       <textarea
         id="inputArea"
-        rows="25"
+        rows="20"
         placeholder="Enter your text string..."
         autofocus
       ></textarea>
@@ -286,14 +286,20 @@
           let html = `<h3>${title}</h3>`;
           html += `<div>Length: <strong>${str.length}</strong> characters</div>`;
           html += `<div>Distinct symbols: <strong>${distinct.length}</strong></div>`;
+          const counts = [];
           html += '<div class="symbols-grid">';
           for (const ch of distinct) {
             const count = [...str].filter((c) => c === ch).length;
+            counts.push(count);
             const pct = ((count / str.length) * 100).toFixed(2);
             const display = ch === " " ? "(space)" : ch;
             html += `<span class="symbol-item">'${display}': ${pct}%</span>`;
           }
           html += "</div>";
+          const mean = str.length / distinct.length;
+          const variance = counts.reduce((sum, c) => sum + (c - mean) ** 2, 0) / distinct.length;
+          const stdDev = Math.sqrt(variance);
+          html += `<div>Standard deviation: <strong>${stdDev.toFixed(4)}</strong> chars</div>`;
           html += `<div class="entropy-line">Total entropy: <strong>${totalEntropy.toFixed(4)}</strong> bits</div>`;
           html += `<div>Entropy per character: <strong>${entropyPerChar.toFixed(4)}</strong> bits/char</div>`;
           return html;
@@ -351,7 +357,7 @@
         function handleBalance() {
           const str = inputArea.value;
           if (str.length === 0) return;
-          const distinct = getDistinctSymbols(str);
+          const distinct = getDistinctSymbols(str).sort();
           let balanced = str;
           for (const ch of distinct) {
             balanced += ch.repeat(10);
