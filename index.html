@@ -1,505 +1,518 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CADENACHO</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CADENACHO</title>
-  <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background: #0c0c0c;
-      color: #33ff33;
-      font-family: "Courier New", Courier, monospace;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 1rem;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 900px;
-      border: 2px solid #33ff33;
-      padding: 1.2rem;
-      margin-top: 1rem;
-      box-shadow: 0 0 12px rgba(51, 255, 51, 0.15);
-    }
-
-    h1 {
-      font-size: 1.3rem;
-      text-align: center;
-      margin-bottom: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      text-shadow: 0 0 8px rgba(51, 255, 51, 0.4);
-    }
-
-    textarea {
-      width: 100%;
-      height: 25em;
-      background: #0a0a0a;
-      color: #33ff33;
-      border: 1px solid #33ff33;
-      font-family: "Courier New", Courier, monospace;
-      font-size: 0.7rem;
-      padding: 0.5rem;
-      resize: vertical;
-      outline: none;
-      caret-color: #33ff33;
-    }
-
-    textarea:focus {
-      box-shadow: 0 0 8px rgba(51, 255, 51, 0.3);
-    }
-
-    .buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin: 0.8rem 0;
-    }
-
-    button {
-      background: #0a0a0a;
-      color: #33ff33;
-      border: 1px solid #33ff33;
-      font-family: "Courier New", Courier, monospace;
-      font-size: 0.8rem;
-      padding: 0.4rem 0.9rem;
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      flex: 1 1 auto;
-      min-width: 100px;
-    }
-
-    button:hover {
-      background: #1a3a1a;
-      box-shadow: 0 0 6px rgba(51, 255, 51, 0.4);
-    }
-
-    button:active {
-      background: #2a4a2a;
-    }
-
-    .results {
-      display: flex;
-      gap: 0.6rem;
-      min-height: 120px;
-      font-size: 0.75rem;
-      line-height: 1.5;
-    }
-
-    .analysis-panel {
-      flex: 1 1 50%;
-      border: 1px solid #33ff33;
-      padding: 0.5rem;
-      background: #0a0a0a;
-      word-break: break-word;
-      min-width: 0;
-    }
-
-    .analysis-panel h3 {
-      font-size: 0.8rem;
-      margin-bottom: 0.4rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .symbols-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.3rem 0.8rem;
-    }
-
-    .symbol-item {
-      white-space: nowrap;
-    }
-
-    .entropy-line {
-      margin-top: 0.5rem;
-      border-top: 1px dashed #33ff33;
-      padding-top: 0.5rem;
-    }
-
-    .footer {
-      text-align: center;
-      font-size: 0.65rem;
-      margin-top: 0.8rem;
-      opacity: 0.5;
-    }
-
-    @media (max-width: 600px) {
       body {
-        padding: 0.5rem;
+        background: #0c0c0c;
+        color: #33ff33;
+        font-family: "Courier New", Courier, monospace;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 1rem;
       }
 
       .container {
-        padding: 0.8rem;
-        margin-top: 0.5rem;
+        width: 100%;
+        max-width: 900px;
+        border: 2px solid #33ff33;
+        padding: 1.2rem;
+        margin-top: 1rem;
+        box-shadow: 0 0 12px rgba(51, 255, 51, 0.15);
       }
 
       h1 {
-        font-size: 1rem;
+        font-size: 1.3rem;
+        text-align: center;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 0 0 8px rgba(51, 255, 51, 0.4);
       }
 
       textarea {
+        width: 100%;
         height: 25em;
+        background: #0a0a0a;
+        color: #33ff33;
+        border: 1px solid #33ff33;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 0.7rem;
+        padding: 0.5rem;
+        resize: vertical;
+        outline: none;
+        caret-color: #33ff33;
+      }
+
+      textarea:focus {
+        box-shadow: 0 0 8px rgba(51, 255, 51, 0.3);
+      }
+
+      .buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 0.8rem 0;
       }
 
       button {
-        font-size: 0.7rem;
-        padding: 0.35rem 0.6rem;
+        background: #0a0a0a;
+        color: #33ff33;
+        border: 1px solid #33ff33;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 0.8rem;
+        padding: 0.4rem 0.9rem;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        flex: 1 1 auto;
+        min-width: 100px;
+      }
+
+      button:hover {
+        background: #1a3a1a;
+        box-shadow: 0 0 6px rgba(51, 255, 51, 0.4);
+      }
+
+      button:active {
+        background: #2a4a2a;
       }
 
       .results {
-        flex-direction: column;
-        font-size: 0.7rem;
+        display: flex;
+        gap: 0.6rem;
+        min-height: 120px;
+        font-size: 0.75rem;
+        line-height: 1.5;
       }
-    }
-  </style>
-</head>
 
-<body>
-  <div class="container">
-    <h1>CADENACHO: Analyze and model your text string</h1>
+      .analysis-panel {
+        flex: 1 1 50%;
+        border: 1px solid #33ff33;
+        padding: 0.5rem;
+        background: #0a0a0a;
+        word-break: break-word;
+        min-width: 0;
+      }
 
-    <textarea id="inputArea" rows="20" placeholder="Enter your text string..." autofocus></textarea>
+      .analysis-panel h3 {
+        font-size: 0.8rem;
+        margin-bottom: 0.4rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
 
-    <div class="buttons">
-      <button id="btnShuffle">Shuffle</button>
-      <button id="btnReverse">Reverse</button>
-      <button id="btnZip">Zip</button>
-      <button id="btnMix">Mix</button>
-      <button id="btnTwist">Twist</button>
-      <button id="btnBalance">+10 balanced</button>
-      <button id="btnSelect10">Select 10</button>
-      <button id="btnSelect64">Select 64</button>
-      <button id="btnSelect100">Select 100</button>
-      <button id="btnSelect256">Select 256</button>
-      <button id="btnSelect1000">Select 1000</button>
-      <button id="btnSelectAll">Select All</button>
-      <button id="btnClear">Clear / Reset</button>
+      .symbols-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem 0.8rem;
+      }
+
+      .symbol-item {
+        white-space: nowrap;
+      }
+
+      .entropy-line {
+        margin-top: 0.5rem;
+        border-top: 1px dashed #33ff33;
+        padding-top: 0.5rem;
+      }
+
+      .footer {
+        text-align: center;
+        font-size: 0.65rem;
+        margin-top: 0.8rem;
+        opacity: 0.5;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 0.5rem;
+        }
+
+        .container {
+          padding: 0.8rem;
+          margin-top: 0.5rem;
+        }
+
+        h1 {
+          font-size: 1rem;
+        }
+
+        textarea {
+          height: 25em;
+        }
+
+        button {
+          font-size: 0.7rem;
+          padding: 0.35rem 0.6rem;
+        }
+
+        .results {
+          flex-direction: column;
+          font-size: 0.7rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>CADENACHO: Analyze and model your text string</h1>
+
+      <textarea
+        id="inputArea"
+        rows="20"
+        placeholder="Enter your text string..."
+        autofocus
+      ></textarea>
+
+      <div class="buttons">
+        <button id="btnShuffle">Shuffle</button>
+        <button id="btnReverse">Reverse</button>
+        <button id="btnZip">Zip</button>
+        <button id="btnMix">Mix</button>
+        <button id="btnTwist">Twist</button>
+        <button id="btnBalance">+10 balanced</button>
+        <button id="btnSelect10">Select 10</button>
+        <button id="btnSelect64">Select 64</button>
+        <button id="btnSelect100">Select 100</button>
+        <button id="btnSelect256">Select 256</button>
+        <button id="btnSelect1000">Select 1000</button>
+        <button id="btnSelectAll">Select All</button>
+        <button id="btnClear">Clear / Reset</button>
+      </div>
+
+      <div class="results" id="results">
+        <div class="analysis-panel" id="panelFull">
+          <em>Enter text to see analysis.</em>
+        </div>
+        <div class="analysis-panel" id="panelSelection">
+          <em>Select text to see analysis.</em>
+        </div>
+      </div>
+      <footer class="footer">
+        MIT License. No warranty. Use this software at your own risk.
+      </footer>
     </div>
 
-    <div class="results" id="results">
-      <div class="analysis-panel" id="panelFull">
-        <em>Enter text to see analysis.</em>
-      </div>
-      <div class="analysis-panel" id="panelSelection">
-        <em>Select text to see analysis.</em>
-      </div>
-    </div>
-    <footer class="footer">
-      MIT License. No warranty. Use this software at your own risk.
-    </footer>
-  </div>
+    <script>
+      (() => {
+        const inputArea = document.getElementById("inputArea");
+        const resultsDiv = document.getElementById("results");
+        const panelFull = document.getElementById("panelFull");
+        const panelSelection = document.getElementById("panelSelection");
+        const btnShuffle = document.getElementById("btnShuffle");
+        const btnReverse = document.getElementById("btnReverse");
+        const btnZip = document.getElementById("btnZip");
+        const btnMix = document.getElementById("btnMix");
+        const btnTwist = document.getElementById("btnTwist");
+        const btnBalance = document.getElementById("btnBalance");
+        const btnSelect10 = document.getElementById("btnSelect10");
+        const btnSelect64 = document.getElementById("btnSelect64");
+        const btnSelect100 = document.getElementById("btnSelect100");
+        const btnSelect256 = document.getElementById("btnSelect256");
+        const btnSelect1000 = document.getElementById("btnSelect1000");
+        const btnSelectAll = document.getElementById("btnSelectAll");
+        const btnClear = document.getElementById("btnClear");
 
-  <script>
-    (() => {
-      const inputArea = document.getElementById("inputArea");
-      const resultsDiv = document.getElementById("results");
-      const panelFull = document.getElementById("panelFull");
-      const panelSelection = document.getElementById("panelSelection");
-      const btnShuffle = document.getElementById("btnShuffle");
-      const btnReverse = document.getElementById("btnReverse");
-      const btnZip = document.getElementById("btnZip");
-      const btnMix = document.getElementById("btnMix");
-      const btnTwist = document.getElementById("btnTwist");
-      const btnBalance = document.getElementById("btnBalance");
-      const btnSelect10 = document.getElementById("btnSelect10");
-      const btnSelect64 = document.getElementById("btnSelect64");
-      const btnSelect100 = document.getElementById("btnSelect100");
-      const btnSelect256 = document.getElementById("btnSelect256");
-      const btnSelect1000 = document.getElementById("btnSelect1000");
-      const btnSelectAll = document.getElementById("btnSelectAll");
-      const btnClear = document.getElementById("btnClear");
+        let selectPos = 0;
 
-      let selectPos = 0;
-
-      function getRandomIntFromInterval(min, max) {
-        const result = Math.floor(Math.random() * (max - min + 1)) + min;
-        const discardCount = Math.floor(Math.random() * 101);
-        for (let k = 0; k < discardCount; k++) {
-          Math.random();
-        }
-        return result;
-      }
-
-      function shuffleString(str) {
-        const a = str.split("");
-        const n = a.length;
-        for (let i = n - 1; i > 0; i--) {
-          const j = getRandomIntFromInterval(0, i);
-          const tmp = a[i];
-          a[i] = a[j];
-          a[j] = tmp;
-        }
-        return a.join("");
-      }
-
-      function getEntropy(strNumber, strNumberAlphabet) {
-        const ocurrencesArray = [];
-        const len = strNumber.length;
-        if (strNumberAlphabet) {
-          for (let j = 0; j < strNumberAlphabet.length; j++) {
-            ocurrencesArray.push(0);
+        function getRandomIntFromInterval(min, max) {
+          if (
+            !Number.isSafeInteger(min) ||
+            !Number.isSafeInteger(max) ||
+            min > max
+          ) {
+            throw new Error("min y max deben ser enteros seguros y min <= max");
           }
-        } else {
-          strNumberAlphabet = "";
-          for (let j = 0; j < len; j++) {
-            if (strNumberAlphabet.indexOf(strNumber[j]) === -1) {
-              strNumberAlphabet += strNumber[j];
+          const range = BigInt(max) - BigInt(min) + 1n;
+          const MAX = 2n ** 32n;
+          const limit = MAX - (MAX % range);
+          const array = new Uint32Array(1);
+          do {
+            crypto.getRandomValues(array);
+          } while (BigInt(array[0]) >= limit);
+          return Number(BigInt(min) + (BigInt(array[0]) % range));
+        }
+
+        function shuffleString(str) {
+          const a = str.split("");
+          const n = a.length;
+          for (let i = n - 1; i > 0; i--) {
+            const j = getRandomIntFromInterval(0, i);
+            const tmp = a[i];
+            a[i] = a[j];
+            a[j] = tmp;
+          }
+          return a.join("");
+        }
+
+        function getEntropy(strNumber, strNumberAlphabet) {
+          const ocurrencesArray = [];
+          const len = strNumber.length;
+          if (strNumberAlphabet) {
+            for (let j = 0; j < strNumberAlphabet.length; j++) {
               ocurrencesArray.push(0);
             }
+          } else {
+            strNumberAlphabet = "";
+            for (let j = 0; j < len; j++) {
+              if (strNumberAlphabet.indexOf(strNumber[j]) === -1) {
+                strNumberAlphabet += strNumber[j];
+                ocurrencesArray.push(0);
+              }
+            }
           }
-        }
-        for (let j = 0; j < len; j++) {
-          const digit = strNumber[j];
-          const index = strNumberAlphabet.indexOf(digit);
-          ocurrencesArray[index]++;
-        }
-        let totalEntropy = 0;
-        for (let j = 0; j < ocurrencesArray.length; j++) {
-          const frequency = ocurrencesArray[j] / len;
-          if (frequency > 0) {
-            totalEntropy += frequency * Math.log2(1 / frequency);
+          for (let j = 0; j < len; j++) {
+            const digit = strNumber[j];
+            const index = strNumberAlphabet.indexOf(digit);
+            ocurrencesArray[index]++;
           }
-        }
-        return totalEntropy;
-      }
-
-      function getDistinctSymbols(str) {
-        const distinct = [];
-        for (const ch of str) {
-          if (!distinct.includes(ch)) {
-            distinct.push(ch);
+          let totalEntropy = 0;
+          for (let j = 0; j < ocurrencesArray.length; j++) {
+            const frequency = ocurrencesArray[j] / len;
+            if (frequency > 0) {
+              totalEntropy += frequency * Math.log2(1 / frequency);
+            }
           }
+          return totalEntropy;
         }
-        return distinct;
-      }
 
-      function buildAnalysisHTML(title, str) {
-        if (str.length === 0) return `<em>${title}</em>`;
-        const distinct = getDistinctSymbols(str).sort();
-        const alphabet = distinct.join("");
-        const totalEntropy = getEntropy(str, alphabet);
-        const entropyPerChar = totalEntropy / str.length;
-
-        let html = `<h3>${title}</h3>`;
-        html += `<div>Length: <strong>${str.length}</strong> characters</div>`;
-        html += `<div>Distinct symbols: <strong>${distinct.length}</strong></div>`;
-        const counts = [];
-        html += '<div class="symbols-grid">';
-        for (const ch of distinct) {
-          const count = [...str].filter((c) => c === ch).length;
-          counts.push(count);
-          const pct = ((count / str.length) * 100).toFixed(2);
-          const display = ch === " " ? "(space)" : ch;
-          html += `<span class="symbol-item">'${display}': ${pct}%</span>`;
+        function getDistinctSymbols(str) {
+          const distinct = [];
+          for (const ch of str) {
+            if (!distinct.includes(ch)) {
+              distinct.push(ch);
+            }
+          }
+          return distinct;
         }
-        html += "</div>";
-        const mean = str.length / distinct.length;
-        const variance = counts.reduce((sum, c) => sum + (c - mean) ** 2, 0) / distinct.length;
-        const stdDev = Math.sqrt(variance);
-        const cv = (stdDev / mean) * 100;
-        html += `<div>Coefficient of variation: <strong>${cv.toFixed(4)}%</strong></div>`;
-        html += `<div class="entropy-line">Total entropy: <strong>${totalEntropy.toFixed(4)}</strong> bits</div>`;
-        html += `<div>Entropy per character: <strong>${entropyPerChar.toFixed(4)}</strong> bits/char</div>`;
-        return html;
-      }
 
-      function analyze() {
-        const str = inputArea.value;
-        if (str.length === 0) {
+        function buildAnalysisHTML(title, str) {
+          if (str.length === 0) return `<em>${title}</em>`;
+          const distinct = getDistinctSymbols(str).sort();
+          const alphabet = distinct.join("");
+          const totalEntropy = getEntropy(str, alphabet);
+          const entropyPerChar = totalEntropy / str.length;
+
+          let html = `<h3>${title}</h3>`;
+          html += `<div>Length: <strong>${str.length}</strong> characters</div>`;
+          html += `<div>Distinct symbols: <strong>${distinct.length}</strong></div>`;
+          const counts = [];
+          html += '<div class="symbols-grid">';
+          for (const ch of distinct) {
+            const count = [...str].filter((c) => c === ch).length;
+            counts.push(count);
+            const pct = ((count / str.length) * 100).toFixed(2);
+            const display = ch === " " ? "(space)" : ch;
+            html += `<span class="symbol-item">'${display}': ${pct}%</span>`;
+          }
+          html += "</div>";
+          const mean = str.length / distinct.length;
+          const variance =
+            counts.reduce((sum, c) => sum + (c - mean) ** 2, 0) /
+            distinct.length;
+          const stdDev = Math.sqrt(variance);
+          const cv = (stdDev / mean) * 100;
+          html += `<div>Coefficient of variation: <strong>${cv.toFixed(4)}%</strong></div>`;
+          html += `<div class="entropy-line">Total entropy: <strong>${totalEntropy.toFixed(4)}</strong> bits</div>`;
+          html += `<div>Entropy per character: <strong>${entropyPerChar.toFixed(4)}</strong> bits/char</div>`;
+          return html;
+        }
+
+        function analyze() {
+          const str = inputArea.value;
+          if (str.length === 0) {
+            panelFull.innerHTML = "<em>Enter text to see analysis.</em>";
+            panelSelection.innerHTML = "<em>Select text to see analysis.</em>";
+            return;
+          }
+
+          const selStart = inputArea.selectionStart;
+          const selEnd = inputArea.selectionEnd;
+          const selected =
+            selStart !== selEnd ? str.substring(selStart, selEnd) : "";
+
+          panelFull.innerHTML = buildAnalysisHTML("Full string", str);
+          panelSelection.innerHTML = buildAnalysisHTML("Selection", selected);
+        }
+
+        function handleShuffle() {
+          const str = inputArea.value;
+          if (str.length === 0) return;
+          inputArea.value = shuffleString(str);
+          selectPos = 0;
+          analyze();
+        }
+
+        function handleReverse() {
+          const str = inputArea.value;
+          if (str.length === 0) return;
+          inputArea.value = [...str].reverse().join("");
+          selectPos = 0;
+          analyze();
+        }
+
+        function joinAlternating(arr1, arr2) {
+          const result = [];
+          const maxLength = Math.max(arr1.length, arr2.length);
+          for (let i = 0; i < maxLength; i++) {
+            if (i < arr1.length) result.push(arr1[i]);
+            if (i < arr2.length) result.push(arr2[i]);
+          }
+          return result.join("");
+        }
+
+        function zip(s1) {
+          if (s1.length === 0) return "";
+          const mid = Math.ceil(s1.length / 2);
+          const left = s1.slice(0, mid);
+          const right = s1.slice(mid);
+          return joinAlternating(left, right);
+        }
+
+        function handleZip() {
+          const str = inputArea.value;
+          if (str.length === 0) return;
+          const result = zip(str);
+          inputArea.value = result;
+          selectPos = 0;
+          analyze();
+        }
+
+        function mix(str) {
+          if (str.length === 0) return "";
+          const chars = [...str];
+          for (let i = 0; i + 1 < chars.length; i += 2) {
+            [chars[i], chars[i + 1]] = [chars[i + 1], chars[i]];
+          }
+          return chars.join("");
+        }
+
+        function handleMix() {
+          const str = inputArea.value;
+          if (str.length === 0) return;
+          inputArea.value = mix(str);
+          selectPos = 0;
+          analyze();
+        }
+
+        function twist(str) {
+          const oper1 = Math.floor(Math.random() * 3);
+          const oper2 = Math.floor(Math.random() * 3);
+          const mid = Math.ceil(str.length / 2);
+          const s1 = str.slice(0, mid);
+          const s2 = str.slice(mid);
+          let r1, r2;
+          switch (oper1) {
+            case 0:
+              r1 = zip(s1);
+              break;
+            case 1:
+              r1 = [...s1].reverse().join("");
+              break;
+            case 2:
+              r1 = mix(s1);
+              break;
+          }
+          switch (oper2) {
+            case 0:
+              r2 = zip(s2);
+              break;
+            case 1:
+              r2 = [...s2].reverse().join("");
+              break;
+            case 2:
+              r2 = mix(s2);
+              break;
+          }
+          return joinAlternating(r1, r2);
+        }
+
+        function handleTwist() {
+          inputArea.value = twist(inputArea.value);
+          selectPos = 0;
+          analyze();
+        }
+
+        function handleBalance() {
+          const str = inputArea.value;
+          if (str.length === 0) return;
+          const distinct = getDistinctSymbols(str).sort();
+          let balanced = str;
+          for (const ch of distinct) {
+            balanced += ch.repeat(10);
+          }
+          inputArea.value = balanced;
+          selectPos = 0;
+          analyze();
+        }
+
+        function handleClear() {
+          inputArea.value = "";
           panelFull.innerHTML = "<em>Enter text to see analysis.</em>";
           panelSelection.innerHTML = "<em>Select text to see analysis.</em>";
-          return;
+          selectPos = 0;
+          inputArea.focus();
         }
 
-        const selStart = inputArea.selectionStart;
-        const selEnd = inputArea.selectionEnd;
-        const selected =
-          selStart !== selEnd ? str.substring(selStart, selEnd) : "";
-
-        panelFull.innerHTML = buildAnalysisHTML("Full string", str);
-        panelSelection.innerHTML = buildAnalysisHTML("Selection", selected);
-      }
-
-      function handleShuffle() {
-        const str = inputArea.value;
-        if (str.length === 0) return;
-        inputArea.value = shuffleString(str);
-        selectPos = 0;
-        analyze();
-      }
-
-      function handleReverse() {
-        const str = inputArea.value;
-        if (str.length === 0) return;
-        inputArea.value = [...str].reverse().join("");
-        selectPos = 0;
-        analyze();
-      }
-
-      function joinAlternating(arr1, arr2) {
-        const result = [];
-        const maxLength = Math.max(arr1.length, arr2.length);
-        for (let i = 0; i < maxLength; i++) {
-          if (i < arr1.length) result.push(arr1[i]);
-          if (i < arr2.length) result.push(arr2[i]);
+        function handleSelect(n) {
+          const str = inputArea.value;
+          if (str.length === 0) return;
+          if (selectPos >= str.length) selectPos = 0;
+          const end = Math.min(selectPos + n, str.length);
+          inputArea.focus();
+          inputArea.setSelectionRange(selectPos, end);
+          selectPos = end >= str.length ? 0 : end;
+          analyze();
         }
-        return result.join("");
-      }
 
-      function zip(s1) {
-        if (s1.length === 0) return "";
-        const mid = Math.ceil(s1.length / 2);
-        const left = s1.slice(0, mid);
-        const right = s1.slice(mid);
-        return joinAlternating(left, right);
-      }
-
-      function handleZip() {
-        const str = inputArea.value;
-        if (str.length === 0) return;
-        const result = zip(str);
-        inputArea.value = result;
-        selectPos = 0;
-        analyze();
-      }
-
-      function mix(str) {
-        if (str.length === 0) return "";
-        const chars = [...str];
-        for (let i = 0; i + 1 < chars.length; i += 2) {
-          [chars[i], chars[i + 1]] = [chars[i + 1], chars[i]];
+        function handleSelectAll() {
+          const str = inputArea.value;
+          if (str.length === 0) return;
+          inputArea.focus();
+          inputArea.setSelectionRange(0, str.length);
+          selectPos = 0;
+          analyze();
         }
-        return chars.join("");
-      }
 
-      function handleMix() {
-        const str = inputArea.value;
-        if (str.length === 0) return;
-        inputArea.value = mix(str);
-        selectPos = 0;
+        inputArea.addEventListener("input", () => {
+          selectPos = 0;
+          analyze();
+        });
+        inputArea.addEventListener("mouseup", analyze);
+        inputArea.addEventListener("keyup", (e) => {
+          if (e.key === "Shift" || e.key.includes("Arrow")) analyze();
+        });
+        btnShuffle.addEventListener("click", handleShuffle);
+        btnReverse.addEventListener("click", handleReverse);
+        btnZip.addEventListener("click", handleZip);
+        btnMix.addEventListener("click", handleMix);
+        btnTwist.addEventListener("click", handleTwist);
+        btnBalance.addEventListener("click", handleBalance);
+        btnSelect10.addEventListener("click", () => handleSelect(10));
+        btnSelect64.addEventListener("click", () => handleSelect(64));
+        btnSelect100.addEventListener("click", () => handleSelect(100));
+        btnSelect256.addEventListener("click", () => handleSelect(256));
+        btnSelect1000.addEventListener("click", () => handleSelect(1000));
+        btnSelectAll.addEventListener("click", handleSelectAll);
+        btnClear.addEventListener("click", handleClear);
+
         analyze();
-      }
-
-      function twist(str) {
-        const oper1 = Math.floor(Math.random() * 3);
-        const oper2 = Math.floor(Math.random() * 3);
-        const mid = Math.ceil(str.length / 2);
-        const s1 = str.slice(0, mid);
-        const s2 = str.slice(mid);
-        let r1, r2;
-        switch (oper1) {
-          case 0:
-            r1 = zip(s1);
-            break;
-          case 1:
-            r1 = [...s1].reverse().join("");
-            break;
-          case 2:
-            r1 = mix(s1);
-            break;
-
-        }
-        switch (oper2) {
-          case 0:
-            r2 = zip(s2);
-            break;
-          case 1:
-            r2 = [...s2].reverse().join("");
-            break;
-          case 2:
-            r2 = mix(s2);
-            break;
-        }
-        return joinAlternating(r1, r2);
-      }
-
-      function handleTwist() {
-        inputArea.value = twist(inputArea.value);
-        selectPos = 0;
-        analyze();
-      }
-
-      function handleBalance() {
-        const str = inputArea.value;
-        if (str.length === 0) return;
-        const distinct = getDistinctSymbols(str).sort();
-        let balanced = str;
-        for (const ch of distinct) {
-          balanced += ch.repeat(10);
-        }
-        inputArea.value = balanced;
-        selectPos = 0;
-        analyze();
-      }
-
-      function handleClear() {
-        inputArea.value = "";
-        panelFull.innerHTML = "<em>Enter text to see analysis.</em>";
-        panelSelection.innerHTML = "<em>Select text to see analysis.</em>";
-        selectPos = 0;
-        inputArea.focus();
-      }
-
-      function handleSelect(n) {
-        const str = inputArea.value;
-        if (str.length === 0) return;
-        if (selectPos >= str.length) selectPos = 0;
-        const end = Math.min(selectPos + n, str.length);
-        inputArea.focus();
-        inputArea.setSelectionRange(selectPos, end);
-        selectPos = end >= str.length ? 0 : end;
-        analyze();
-      }
-
-      function handleSelectAll() {
-        const str = inputArea.value;
-        if (str.length === 0) return;
-        inputArea.focus();
-        inputArea.setSelectionRange(0, str.length);
-        selectPos = 0;
-        analyze();
-      }
-
-      inputArea.addEventListener("input", () => {
-        selectPos = 0;
-        analyze();
-      });
-      inputArea.addEventListener("mouseup", analyze);
-      inputArea.addEventListener("keyup", (e) => {
-        if (e.key === "Shift" || e.key.includes("Arrow")) analyze();
-      });
-      btnShuffle.addEventListener("click", handleShuffle);
-      btnReverse.addEventListener("click", handleReverse);
-      btnZip.addEventListener("click", handleZip);
-      btnMix.addEventListener("click", handleMix);
-      btnTwist.addEventListener("click", handleTwist);
-      btnBalance.addEventListener("click", handleBalance);
-      btnSelect10.addEventListener("click", () => handleSelect(10));
-      btnSelect64.addEventListener("click", () => handleSelect(64));
-      btnSelect100.addEventListener("click", () => handleSelect(100));
-      btnSelect256.addEventListener("click", () => handleSelect(256));
-      btnSelect1000.addEventListener("click", () => handleSelect(1000));
-      btnSelectAll.addEventListener("click", handleSelectAll);
-      btnClear.addEventListener("click", handleClear);
-
-      analyze();
-    })();
-  </script>
-</body>
-
+      })();
+    </script>
+  </body>
 </html>
