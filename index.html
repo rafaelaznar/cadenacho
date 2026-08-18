@@ -44,7 +44,7 @@
 
       textarea {
         width: 100%;
-        height: 25em;
+        height: 15em;
         background: #0a0a0a;
         color: #33ff33;
         border: 1px solid #33ff33;
@@ -62,9 +62,39 @@
 
       .buttons {
         display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        margin: 0.8rem 0;
+      }
+
+      .button-row {
+        display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
-        margin: 0.8rem 0;
+      }
+
+      .button-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        flex: 1 1 220px;
+        min-width: 0;
+      }
+
+      .button-group.left {
+        justify-content: flex-start;
+      }
+
+      .button-group.center {
+        justify-content: center;
+      }
+
+      .button-group.right {
+        justify-content: flex-end;
+      }
+
+      .button-group.wide {
+        flex: 1 1 100%;
       }
 
       button {
@@ -77,8 +107,8 @@
         cursor: pointer;
         text-transform: uppercase;
         letter-spacing: 1px;
-        flex: 1 1 auto;
-        min-width: 100px;
+        flex: 1 1 140px;
+        min-width: 110px;
       }
 
       button:hover {
@@ -120,8 +150,27 @@
         gap: 0.3rem 0.8rem;
       }
 
+      .symbol-item1 {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+
+      }
+
       .symbol-item {
+        font-size: .8rem;
+        min-width: 1.2rem;
+        min-height: 1.2rem;
+        padding: 0.1rem 0.25rem;
+        margin-right: 0.2rem;
         white-space: nowrap;
+        background: #1a5f1a;
+        color: #ffffff;
+        border: 1px solid #33ff33;
+        box-shadow: 0 0 3px rgba(51, 255, 51, 0.2);
+        font-weight: 700;
+        line-height: 1;
       }
 
       .entropy-line {
@@ -158,7 +207,7 @@
         }
 
         textarea {
-          height: 25em;
+          height: 15em;
         }
 
         button {
@@ -180,22 +229,36 @@
 
       <textarea
         id="inputArea"
-        rows="20"
+        rows="15"
         placeholder="Enter your text string..."
         autofocus
       ></textarea>
 
       <div class="buttons">
-        <button id="btnShuffle">Shuffle</button>
-        <button id="btnTwist">Twist</button>
-        <button id="btnBalance">+10 balanced</button>
-        <button id="btnSelect10">Select 10</button>
-        <button id="btnSelect64">Select 64</button>
-        <button id="btnSelect100">Select 100</button>
-        <button id="btnSelect256">Select 256</button>
-        <button id="btnSelect1000">Select 1000</button>
-        <button id="btnSelectAll">Select All</button>
-        <button id="btnClear">Clear / Reset</button>
+        <div class="button-row">
+          <div class="button-group left">
+            <button id="btnShuffle">Shuffle</button>
+            <button id="btnTwist">Twist</button>
+          </div>
+          <div class="button-group center">
+            <button id="btnClear">Clear / Reset</button>
+          </div>
+          <div class="button-group right">
+            <button id="btnBalance">+10 balanced</button>
+          </div>
+        </div>
+
+        <div class="button-row">
+          <div class="button-group wide">
+            <button id="btnSelect10">Select 10</button>
+            <button id="btnSelect64">Select 64</button>
+            <button id="btnSelect100">Select 100</button>
+            <button id="btnSelect256">Select 256</button>
+            <button id="btnSelect1000">Select 1000</button>
+            <button id="btnSelectAll">Select All</button>
+            <button id="btnClearSelection">Clear Selection</button>
+          </div>
+        </div>
       </div>
 
       <div class="results" id="results">
@@ -218,9 +281,6 @@
         const panelFull = document.getElementById("panelFull");
         const panelSelection = document.getElementById("panelSelection");
         const btnShuffle = document.getElementById("btnShuffle");
-        //const btnReverse = document.getElementById("btnReverse");
-        //const btnZip = document.getElementById("btnZip");
-        //const btnMix = document.getElementById("btnMix");
         const btnTwist = document.getElementById("btnTwist");
         const btnBalance = document.getElementById("btnBalance");
         const btnSelect10 = document.getElementById("btnSelect10");
@@ -230,6 +290,7 @@
         const btnSelect1000 = document.getElementById("btnSelect1000");
         const btnSelectAll = document.getElementById("btnSelectAll");
         const btnClear = document.getElementById("btnClear");
+        const btnClearSelection = document.getElementById("btnClearSelection");
 
         let selectPos = 0;
 
@@ -373,6 +434,12 @@
           return `${value.toFixed(1)} ${unit.name}`;
         }
 
+        function formatPercent(value) {
+          const fixed = value.toFixed(2);
+          const [whole, fraction] = fixed.split(".");
+          return `${whole.padStart(2, "0")}.${fraction}%`;
+        }
+
         function buildAnalysisHTML(title, str) {
           if (str.length === 0) return `<em>${title}</em>`;
           const distinct = getDistinctSymbols(str).sort();
@@ -390,9 +457,10 @@
           for (const ch of distinct) {
             const count = [...str].filter((c) => c === ch).length;
             counts.push(count);
-            const pct = ((count / str.length) * 100).toFixed(2);
+            const pct = formatPercent((count / str.length) * 100);
             const display = ch === " " ? "(space)" : ch;
-            html += `<span class="symbol-item">'${display}': ${pct}%</span>`;
+
+            html += `<span class="symbol-item1"><span class="symbol-item">${display}</span>${pct}</span>`;
           }
           html += "</div>";
           const mean = str.length / distinct.length;
@@ -545,6 +613,14 @@
           inputArea.focus();
         }
 
+        function handleClearSelection() {
+          const caretPosition = inputArea.selectionStart;
+          inputArea.focus();
+          inputArea.setSelectionRange(caretPosition, caretPosition);
+          selectPos = 0;
+          analyze();
+        }
+
         function handleSelect(n) {
           const str = inputArea.value;
           if (str.length === 0) return;
@@ -570,6 +646,7 @@
           analyze();
         });
         inputArea.addEventListener("mouseup", analyze);
+        inputArea.addEventListener("select", analyze);
         inputArea.addEventListener("keyup", (e) => {
           if (e.key === "Shift" || e.key.includes("Arrow")) analyze();
         });
@@ -583,6 +660,7 @@
         btnSelect1000.addEventListener("click", () => handleSelect(1000));
         btnSelectAll.addEventListener("click", handleSelectAll);
         btnClear.addEventListener("click", handleClear);
+        btnClearSelection.addEventListener("click", handleClearSelection);
 
         analyze();
       })();
