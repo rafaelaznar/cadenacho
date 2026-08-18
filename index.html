@@ -298,16 +298,31 @@
           return distinct;
         }
 
+        function getCharacterChangeProbability(str) {
+          if (str.length < 2) return 0;
+
+          let changes = 0;
+          for (let i = 1; i < str.length; i++) {
+            if (str[i] !== str[i - 1]) {
+              changes++;
+            }
+          }
+
+          return (changes / (str.length - 1)) * 100;
+        }
+
         function buildAnalysisHTML(title, str) {
           if (str.length === 0) return `<em>${title}</em>`;
           const distinct = getDistinctSymbols(str).sort();
           const alphabet = distinct.join("");
           const totalEntropy = getEntropy(str, alphabet);
           const entropyPerChar = totalEntropy / str.length;
+          const characterChangeProbability = getCharacterChangeProbability(str);
 
           let html = `<h3>${title}</h3>`;
           html += `<div>Length: <strong>${str.length}</strong> characters</div>`;
           html += `<div>Distinct symbols: <strong>${distinct.length}</strong></div>`;
+          html += `<div>Probability of character change: <strong>${characterChangeProbability.toFixed(2)}%</strong></div>`;
           const counts = [];
           html += '<div class="symbols-grid">';
           for (const ch of distinct) {
