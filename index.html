@@ -181,9 +181,6 @@
 
       <div class="buttons">
         <button id="btnShuffle">Shuffle</button>
-        <button id="btnReverse">Reverse</button>
-        <button id="btnZip">Zip</button>
-        <button id="btnMix">Mix</button>
         <button id="btnTwist">Twist</button>
         <button id="btnBalance">+10 balanced</button>
         <button id="btnSelect10">Select 10</button>
@@ -215,9 +212,9 @@
         const panelFull = document.getElementById("panelFull");
         const panelSelection = document.getElementById("panelSelection");
         const btnShuffle = document.getElementById("btnShuffle");
-        const btnReverse = document.getElementById("btnReverse");
-        const btnZip = document.getElementById("btnZip");
-        const btnMix = document.getElementById("btnMix");
+        //const btnReverse = document.getElementById("btnReverse");
+        //const btnZip = document.getElementById("btnZip");
+        //const btnMix = document.getElementById("btnMix");
         const btnTwist = document.getElementById("btnTwist");
         const btnBalance = document.getElementById("btnBalance");
         const btnSelect10 = document.getElementById("btnSelect10");
@@ -358,14 +355,6 @@
           analyze();
         }
 
-        function handleReverse() {
-          const str = inputArea.value;
-          if (str.length === 0) return;
-          inputArea.value = [...str].reverse().join("");
-          selectPos = 0;
-          analyze();
-        }
-
         function joinAlternating(arr1, arr2) {
           const result = [];
           const maxLength = Math.max(arr1.length, arr2.length);
@@ -379,40 +368,36 @@
         function zip(s1) {
           if (s1.length === 0) return "";
           const mid = Math.ceil(s1.length / 2);
-          const left = s1.slice(0, mid);
-          const right = s1.slice(mid);
+          let left = s1.slice(0, mid);          
+          let right = s1.slice(mid);
+          // with 0.5 probability, reverse the right half
+          if (getRandomIntFromInterval(0, 1) < 0.5) {
+            right = [...right].reverse().join("");
+          }
+          // with 0.5 probability, reverse the left half
+          if (getRandomIntFromInterval(0, 1) < 0.5) {
+            left = [...left].reverse().join("");
+          }
           return joinAlternating(left, right);
         }
 
-        function handleZip() {
-          const str = inputArea.value;
-          if (str.length === 0) return;
-          const result = zip(str);
-          inputArea.value = result;
-          selectPos = 0;
-          analyze();
-        }
-
-        function mix(str) {
+        function mixn(str, n, rotate = true) {
+          // Mix characters in groups of n, rotating them to the right if rotate is true
           if (str.length === 0) return "";
           const chars = [...str];
-          for (let i = 0; i + 1 < chars.length; i += 2) {
-            [chars[i], chars[i + 1]] = [chars[i + 1], chars[i]];
+          for (let i = 0; i + n - 1 < chars.length; i += n) {
+            const group = chars.slice(i, i + n);
+            if (rotate) {
+              group.unshift(group.pop());
+            }
+            chars.splice(i, n, ...group);
           }
           return chars.join("");
         }
 
-        function handleMix() {
-          const str = inputArea.value;
-          if (str.length === 0) return;
-          inputArea.value = mix(str);
-          selectPos = 0;
-          analyze();
-        }
-
         function twist(str) {
-          const oper1 = Math.floor(Math.random() * 3);
-          const oper2 = Math.floor(Math.random() * 3);
+          const oper1 = Math.floor(getRandomIntFromInterval(0, 2));
+          const oper2 = Math.floor(getRandomIntFromInterval(0, 2));
           const mid = Math.ceil(str.length / 2);
           const s1 = str.slice(0, mid);
           const s2 = str.slice(mid);
@@ -425,7 +410,9 @@
               r1 = [...s1].reverse().join("");
               break;
             case 2:
-              r1 = mix(s1);
+              const groupSize = Math.max(2, Math.floor(s1.length / 4));
+              const rotate = Math.random() < 0.5;
+              r1 = mixn(s1, groupSize, rotate);
               break;
           }
           switch (oper2) {
@@ -436,7 +423,9 @@
               r2 = [...s2].reverse().join("");
               break;
             case 2:
-              r2 = mix(s2);
+              const groupSize = Math.max(2, Math.floor(s2.length / 4));
+              const rotate = Math.random() < 0.5;
+              r2 = mixn(s2, groupSize, rotate);
               break;
           }
           return joinAlternating(r1, r2);
@@ -498,9 +487,6 @@
           if (e.key === "Shift" || e.key.includes("Arrow")) analyze();
         });
         btnShuffle.addEventListener("click", handleShuffle);
-        btnReverse.addEventListener("click", handleReverse);
-        btnZip.addEventListener("click", handleZip);
-        btnMix.addEventListener("click", handleMix);
         btnTwist.addEventListener("click", handleTwist);
         btnBalance.addEventListener("click", handleBalance);
         btnSelect10.addEventListener("click", () => handleSelect(10));
