@@ -130,6 +130,12 @@
         padding-top: 0.5rem;
       }
 
+      .crack-note {
+        margin-top: 0.3rem;
+        font-size: 0.65rem;
+        opacity: 0.6;
+      }
+
       .footer {
         text-align: center;
         font-size: 0.65rem;
@@ -311,6 +317,62 @@
           return (changes / (str.length - 1)) * 100;
         }
 
+        const ATTACKER_GUESSES_PER_SECOND = 2.7e18; // El Capitan class, exaFLOP (fastest available today)
+        const LOG2_ATTACKER_GUESSES_PER_SECOND = Math.log2(
+          ATTACKER_GUESSES_PER_SECOND
+        );
+        const YEAR_IN_SECONDS = 365.25 * 24 * 3600;
+
+        function estimateCrackTime(length, distinctCount, changePct, cvPct) {
+          // Heuristic entropy model:
+          //   bits = L × log2(R) × uniformity(CV) × change-factor(P)
+          const maxBitsPerChar = Math.log2(distinctCount);
+          const uniformity = 1 / (1 + cvPct / 100);
+          const changeFactor = 0.25 + 0.75 * (changePct / 100);
+          const effectiveBits = length * maxBitsPerChar * uniformity * changeFactor;
+          const keyspaceLog10 = effectiveBits * Math.log10(2);
+          // Average brute force: keyspace / 2, then divide by guess rate.
+          const log2Seconds =
+            effectiveBits - 1 - LOG2_ATTACKER_GUESSES_PER_SECOND;
+          return { effectiveBits, keyspaceLog10, log2Seconds };
+        }
+
+        function formatCrackTime(log2Seconds) {
+          if (!Number.isFinite(log2Seconds)) return "n/a";
+
+          if (log2Seconds < 0) {
+            const seconds = Math.pow(2, log2Seconds);
+            if (seconds < 0.05) return "< 0.1 s";
+            return `${(seconds * 10).toFixed(1)} tenths of a second`;
+          }
+
+          const units = [
+            { name: "s", log2: 0 },
+            { name: "min", log2: Math.log2(60) },
+            { name: "h", log2: Math.log2(3600) },
+            { name: "days", log2: Math.log2(86400) },
+            { name: "months", log2: Math.log2(2629746) },
+            { name: "years", log2: Math.log2(YEAR_IN_SECONDS) },
+          ];
+
+          let unit = units[0];
+          for (const u of units) {
+            if (log2Seconds >= u.log2) unit = u;
+          }
+
+          const value = Math.pow(2, log2Seconds - unit.log2);
+
+          if (unit.name === "years") {
+            if (value >= 1e12) return `${value.toExponential(2)} years`;
+            if (value >= 1e9) return `${(value / 1e9).toFixed(2)} billion years`;
+            if (value >= 1e6) return `${(value / 1e6).toFixed(2)} million years`;
+            if (value >= 1e3) return `${(value / 1e3).toFixed(2)} millennia`;
+            return `${value.toFixed(2)} years`;
+          }
+
+          return `${value.toFixed(1)} ${unit.name}`;
+        }
+
         function buildAnalysisHTML(title, str) {
           if (str.length === 0) return `<em>${title}</em>`;
           const distinct = getDistinctSymbols(str).sort();
@@ -342,6 +404,16 @@
           html += `<div>Coefficient of variation: <strong>${cv.toFixed(4)}%</strong></div>`;
           html += `<div class="entropy-line">Total entropy: <strong>${totalEntropy.toFixed(4)}</strong> bits</div>`;
           html += `<div>Entropy per character: <strong>${entropyPerChar.toFixed(4)}</strong> bits/char</div>`;
+          const crack = estimateCrackTime(
+            str.length,
+            distinct.length,
+            characterChangeProbability,
+            cv
+          );
+          html += `<div class="entropy-line">Crack time: <strong>${formatCrackTime(crack.log2Seconds)}</strong></div>`;
+          html += `<div>Effective keyspace: <strong>≈ 10^${crack.keyspaceLog10.toFixed(1)}</strong> candidates (${crack.effectiveBits.toFixed(1)} bits)</div>`;
+          html += `<div>Attacker speed: <strong>2.7 × 10^18 guesses/s</strong> (El Capitan class)</div>`;
+          html += `<div class="crack-note">Model: bits = L·log₂(R)·(1/(1+CV))·(0.25+0.75·P)</div>`;
           return html;
         }
 
